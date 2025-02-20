@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>云耕智享 - 智慧农业平台</title>
+    <link href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.7.14/dist/vue.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Microsoft YaHei', sans-serif;
+        }
+
+        img {
+            border-radius: 10px; /* 你可以根据需要调整圆角的大小 */
+        }
+
+        .header {
+            height: 100vh;
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), 
+                        url('background.jpg') center/cover;
+            position: relative;
+        }
+
+        .nav {
+            padding: 15px 50px;
+            background: linear-gradient(to right, #2c5f2d 0%, #3a923c 100%);
+            position: fixed;
+            width: 100%;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        .nav.scrolled {
+            padding: 10px 50px;
+            background: rgba(255,255,255,0.98);
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+        }
+
+        .nav-logo {
+            width: 160px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 100px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            position: relative;
+            padding: 8px 0;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 30px;
+        }
+
+        .nav.scrolled .nav-links a {
+            color: #2c5f2d;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #ffd700;
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .nav-links a:hover {
+            transform: translateY(-2px);
+        }
+
+        .nav-links a i {
+            font-size: 16px;
+        }
+
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            .nav {
+                padding: 15px 25px;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+            
+            .menu-toggle {
+                display: block;
+            }
+            
+            .nav-logo {
+                width: 120px;
+            }
+            
+            .nav-links.active {
+                display: flex;
+                flex-direction: column;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: white;
+                padding: 20px;
+                box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            }
+            
+            .nav-links.active a {
+                color: #2c5f2d;
+                padding: 12px;
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        .hero {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: white;
+            display: flex; /* 添加Flexbox布局 */
+            justify-content: center; /* 水平居中 */
+            align-items: center; /* 垂直居中 */
+            flex-direction: column; /* 垂直排列子元素 */
+            height: 100%; /* 确保hero占据整个高度 */
+            gap: 30px; /* 增加子元素之间的间距 */
+        }
+
+        .section {
+            padding: 80px 10%;
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 50px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 0 0 0 20px; /* 增加内边距 */
+            width: 500px; /* 可选：设置固定宽度 */
+            height: 50px;
+            transition: box-shadow 0.3s; /* 添加过渡效果 */
+        }
+
+        .search-box:hover {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 鼠标悬停时的阴影效果 */
+        }
+
+        .search-box input[type="text"] {
+            border: none;
+            outline: none;
+            flex: 1;
+            padding: 0 10px; /* 增加内边距 */
+            font-size: 16px;
+        }
+
+        .search-box button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 0 20px;
+            border-radius: 0 50px 50px 0;
+            cursor: pointer;
+            font-size: 16px;
+            height: 100%; /* 确保按钮高度与搜索框高度相同 */
+            transition: background-color 0.3s; /* 添加过渡效果 */
+        }
+
+        .search-box button:hover {
+            background-color: #0056b3;
+        }
+                
+        .feature-card {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 30px;
+            transition: transform 0.3s;
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+        }
+
+        .carousel {
+            height: 400px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .text-10xl {
+            font-size: 5rem;
+            width: 100REM;
+        }
+        .carousel-item {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 1s;
+        }
+
+        .active {
+            opacity: 1;
+        }
+
+        .mascot {
+            width: 200px; /* 根据需要调整大小 */
+            margin: 0px 0; /* 上下边距 */
+            border-radius: 10px; /* 圆角 */
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <!-- 头部 -->
+        <header class="header">
+            <nav class="nav" :class="{'scrolled': isScrolled}">
+                <img src="logo.png" alt="logo" class="nav-logo">
+                <button class="menu-toggle" @click="toggleMenu">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="nav-links" :class="{'active': menuActive}">
+                    <a v-for="item in navItems" :href="'#'+item.id" @click="menuActive = false">
+                        <i :class="item.icon"></i>
+                        {{ item.text }}
+                    </a>
+                    <a href="#" class="login-btn">
+                        <i class="fas fa-user"></i>
+                        登录/注册
+                    </a>
+                </div>
+            </nav>
+            
+            <div class="hero">
+                
+                <img src="mascot.png" alt="吉祥物" class="mascot"> <!-- 新增的吉祥物图片 -->
+                <h1 class="text-10xl mb-4">云耕智享——开启智慧农业新征程</h1>
+                <div class="search-box">
+                    <input type="text" placeholder="搜索农产品...">
+                    <button @click="search">搜索</button>
+                </div>
+            </div>
+        </header>
+
+        <!-- 平台介绍 -->
+        <section id="about" class="section bg-white">
+            <h2>平台使命</h2>
+            <p>{{ platformMission }}</p>
+            <div class="timeline">
+                <!-- 时间轴内容 -->
+            </div>
+        </section>
+
+        <!-- 特色功能 -->
+        <section id="features" class="section bg-gray-100">
+            <div class="feature-grid">
+                <div v-for="(feature, index) in features" :key="index" class="feature-card">
+                    <img :src="feature.image" alt="feature">
+                    <h3>{{ feature.title }}</h3>
+                    <p>{{ feature.description }}</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 产品商城 -->
+        <section id="shop" class="section">
+            <div class="product-grid">
+                <div v-for="product in products" class="product-card">
+                    <img :src="product.image" alt="product" class="rounded-image">
+                    <div class="product-info">
+                        <h4>{{ product.name }}</h4>
+                        <p>¥{{ product.price }}</p>
+                        <button @click="addToCart(product)">加入购物车</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 底部 -->
+        <footer class="bg-dark text-white py-8">
+            <div class="partner-logos">
+                <img v-for="logo in partnerLogos" :src="logo" alt="partner">
+            </div>
+            <div class="copyright">
+                © 2023 云耕智享 陕ICP备123456号
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // script.js
+        new Vue({
+            el: '#app',
+            data: {
+                navItems: [
+                    { id: 'home', text: '首页' },
+                    { id: 'about', text: '平台介绍' },
+                    { id: 'features', text: '特色功能' },
+                    { id: 'shop', text: '农产品商城' },
+                    { id: 'contact', text: '联系我们' }
+                ],
+                platformMission: `通过创新的种植农产品游戏与电商模式，连接城市与陕北农村，推广陕北特色农产品，打造智慧农场生态，赋能三农发展，推动乡村振兴，让每一份土地都焕发生机，让每一位农民都分享到丰收的喜悦。
+创新的种植农产品游戏与电商模式：我们致力于将游戏元素与农产品电商相结合，通过游戏化的方式，吸引更多城市用户了解并参与到陕北农产品的种植、销售过程中来，提升农产品的品牌认知度和市场竞争力。
+连接城市与陕北农村：我们致力于打破地域限制，通过电商平台将陕北地区的农产品直接销售给城市消费者，同时，也将城市的资金、技术和人才等资源引入农村，促进城乡融合发展。
+推广陕北特色农产品：我们深入挖掘陕北地区的农产品资源，通过电商平台和游戏平台，向全国乃至全球推广陕北的特色农产品，提升陕北农产品的知名度和美誉度。
+打造智慧农场生态：我们利用先进的农业物联网、大数据、人工智能等技术，打造智慧农场生态系统，实现农业生产的智能化、精细化、高效化，提升农业生产效率和农产品质量。
+赋能三农发展：我们致力于通过平台服务，为农民提供技术支持、市场信息、销售渠道等多方面的帮助，提升农民的收入水平 和生活质量，促进三农事业的全面发展。
+推动乡村振兴：我们坚信乡村振兴是国家发展的重要战略，我们将通过平台服务，推动陕北地区的乡村振兴，改善农村的生产生活环境，提升农民的幸福感和获得感。`,
+                features: [
+                    {
+                        title: '游戏化种植',
+                        image: 'game.jpg',
+                        description: '虚拟农场结合真实农业知识...'
+                    },
+                    // 其他功能数据
+                ],
+                products: [
+                    {
+                        name: '陕北小米',
+                        price: 28.8,
+                        image: 'xiaomi.jpg'
+                    },
+                    // 其他产品数据
+                    {
+                        name: '陕北小米',
+                        price: 28.8,
+                        image: 'xiaomi.jpg'
+                    },
+                    {
+                        name: '陕北小米',
+                        price: 28.8,
+                        image: 'xiaomi.jpg'
+                    },
+                ],
+                partnerLogos: ['partner1.png', 'partner2.png']
+            },
+            methods: {
+                search() {
+                    // 搜索逻辑
+                },
+                addToCart(product) {
+                    // 购物车逻辑
+                }
+                
+            }
+        });
+
+        // 轮播图逻辑
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.carousel-item');
+        setInterval(() => {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (currentSlide + 1) % slides.length;
+            slides[currentSlide].classList.add('active');
+        }, 5000);
+    </script>
+</body>
+</html>
